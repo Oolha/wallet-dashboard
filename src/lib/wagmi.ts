@@ -1,9 +1,9 @@
 import { getDefaultConfig } from "@rainbow-me/rainbowkit";
-import { mainnet } from "wagmi/chains";
+import { mainnet, sepolia } from "wagmi/chains";
 
 export const config = getDefaultConfig({
   appName: "Wallet Dashboard",
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!,
-  chains: [mainnet],
+  chains: [mainnet, sepolia],
   ssr: true,
 });

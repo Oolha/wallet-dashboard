@@ -4,4 +4,5 @@ export interface Token {
   name: string;
   decimals: number;
   logoUri?: string;
+  balance: bigint;
 }

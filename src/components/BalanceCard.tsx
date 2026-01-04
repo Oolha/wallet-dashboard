@@ -1,30 +1,52 @@
 "use client";
 
-import { useAccount, useBalance } from "wagmi";
+import { useAccount, useBalance, useChainId } from "wagmi";
 import { formatEther } from "viem";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Wallet, TrendingUp, Loader2, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+const CHAIN_NAME: Record<number, string> = {
+  1: "Ethereum Mainnet",
+  11155111: "Sepolia",
+};
 
 export function BalanceCard() {
   const [mounted, setMounted] = useState(false);
-  const { address, isConnected } = useAccount();
+
+  const { address } = useAccount();
+  const chainId = useChainId();
+
+  const enabled = Boolean(address);
+
   const {
     data: balance,
     isLoading,
     isError,
   } = useBalance({
-    address: address,
+    address,
+    query: { enabled },
   });
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const ethBalance = balance ? formatEther(balance.value) : "0";
-  const formattedBalance = parseFloat(ethBalance).toFixed(4);
+  const chainName = useMemo(() => {
+    if (!chainId) return "—";
+    return CHAIN_NAME[chainId] ?? `Chain ${chainId}`;
+  }, [chainId]);
+
+  const formattedBalance = useMemo(() => {
+    if (!balance) return "0.0000";
+    const eth = formatEther(balance.value);
+    const n = Number(eth);
+    if (!Number.isFinite(n)) return "0.0000";
+    if (n > 0 && n < 0.0001) return "<0.0001";
+    return n.toFixed(4);
+  }, [balance]);
 
   const shouldShowConnectMessage = mounted && !address;
 
@@ -99,7 +121,7 @@ export function BalanceCard() {
 
                   <div className="flex items-center gap-2 text-sm text-gray-600 pt-2 border-t">
                     <TrendingUp className="h-4 w-4 text-green-500" />
-                    <span>Ethereum Mainnet</span>
+                    <span>{chainName}</span>
                   </div>
                 </div>
               )}

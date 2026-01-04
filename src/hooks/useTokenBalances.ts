@@ -3,26 +3,34 @@ import { erc20Abi } from "viem";
 import { Token } from "@/types/token";
 
 export function useTokenBalances(tokens: Token[], address?: `0x${string}`) {
-  const contracts = tokens.map((token) => ({
-    address: token.address,
-    abi: erc20Abi,
-    functionName: "balanceOf",
-    args: address ? [address] : undefined,
-  }));
+  const enabled = Boolean(address) && tokens.length > 0;
+
+  const contracts = enabled
+    ? tokens.map((token) => ({
+        address: token.address,
+        abi: erc20Abi,
+        functionName: "balanceOf" as const,
+        args: [address!],
+      }))
+    : [];
 
   const { data, isLoading, isError } = useReadContracts({
     contracts,
+    query: { enabled },
+    allowFailure: true,
   });
 
   const balances = tokens.map((token, index) => ({
     ...token,
     balance:
-      data?.[index]?.status === "success" ? (data[index].result as bigint) : 0n,
+      enabled && data?.[index]?.status === "success"
+        ? (data[index]!.result as bigint)
+        : 0n,
   }));
 
   return {
     balances,
     isLoading,
-    isError,
+    isError: enabled ? isError : false,
   };
 }
