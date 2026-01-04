@@ -8,13 +8,13 @@ import { Coins, Loader2, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useTokenBalances } from "@/hooks/useTokenBalances";
-import { SEPOLIA_TOKENS } from "@/lib/tokens";
+import { MAINNET_TOKENS } from "@/lib/tokens";
 
 export function TokenList() {
   const [mounted, setMounted] = useState(false);
   const { address } = useAccount();
   const { balances, isLoading, isError } = useTokenBalances(
-    SEPOLIA_TOKENS,
+    MAINNET_TOKENS,
     address
   );
 
@@ -39,7 +39,7 @@ export function TokenList() {
               variant="secondary"
               className="bg-white/20 text-white border-white/30"
             >
-              {SEPOLIA_TOKENS.length} tokens
+              {MAINNET_TOKENS.length} tokens
             </Badge>
           </div>
         </CardHeader>
@@ -91,10 +91,18 @@ export function TokenList() {
                     className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-100"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 bg-linear-to-br from-purple-100 to-pink-100 rounded-full flex items-center justify-center">
-                        <span className="text-sm font-bold text-purple-700">
-                          {token.symbol.slice(0, 2)}
-                        </span>
+                      <div className="h-10 w-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
+                        {token.logoUri ? (
+                          <img
+                            src={token.logoUri}
+                            alt={token.symbol}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-sm font-bold text-purple-700">
+                            {token.symbol.slice(0, 2)}
+                          </span>
+                        )}
                       </div>
                       <div>
                         <p className="font-medium text-gray-900">

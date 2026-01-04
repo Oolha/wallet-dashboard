@@ -45,7 +45,7 @@ export function BalanceCard() {
               variant="secondary"
               className="bg-white/20 text-white border-white/30"
             >
-              Sepolia
+              Ethereum
             </Badge>
           </div>
         </CardHeader>
@@ -59,7 +59,7 @@ export function BalanceCard() {
           )}
 
           {shouldShowConnectMessage && (
-            <div className="flex flex-col items-center justify-center text-center w-full">
+            <div className="flex flex-col items-center justify-center text-center w-full py-8">
               <Wallet className="h-12 w-12 text-gray-400 mb-4" />
               <p className="text-gray-500 text-sm">
                 Connect your wallet to view balance
@@ -99,7 +99,7 @@ export function BalanceCard() {
 
                   <div className="flex items-center gap-2 text-sm text-gray-600 pt-2 border-t">
                     <TrendingUp className="h-4 w-4 text-green-500" />
-                    <span>Testnet ETH</span>
+                    <span>Ethereum Mainnet</span>
                   </div>
                 </div>
               )}

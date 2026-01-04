@@ -47,7 +47,7 @@ export function TransactionList() {
       transition={{ duration: 0.5, delay: 0.2 }}
     >
       <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-        <CardHeader className="bg-gradient-to-r from-green-500 to-teal-600 text-white pb-4">
+        <CardHeader className="bg-linear-to-r from-green-500 to-teal-600 text-white pb-4">
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg font-medium flex items-center gap-2">
               <History className="h-5 w-5" />
@@ -62,7 +62,7 @@ export function TransactionList() {
           </div>
         </CardHeader>
 
-        <CardContent className="pt-6 min-h-[180px]">
+        <CardContent className="pt-6 min-h-45">
           {!mounted && (
             <div className="flex flex-col items-center justify-center py-8">
               <Loader2 className="h-8 w-8 text-gray-400 animate-spin mb-3" />
