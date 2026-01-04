@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Cinzel } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
+const cinzel = Cinzel({
+  subsets: ["latin"],
+  variable: "--font-cinzel",
+});
 
 export const metadata: Metadata = {
-  title: "Wallet Dashboard",
-  description: "Web3 wallet dashboard built with Next.js and wagmi",
+  title: "Grimoire of Digital Assets",
+  description: "Track your magical artifacts across the blockchain realm",
 };
 
 export default function RootLayout({
@@ -17,7 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.className} ${cinzel.variable}`}>
         <Providers>{children}</Providers>
       </body>
     </html>

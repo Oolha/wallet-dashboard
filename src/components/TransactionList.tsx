@@ -11,10 +11,12 @@ import {
   ArrowUpRight,
   ArrowDownLeft,
   ExternalLink,
+  Scroll,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { useTransactions } from "@/hooks/useTransactions";
+import { formatTime } from "@/utils/formatTime";
 
 const EXPLORER_TX_BY_CHAIN: Record<number, string> = {
   1: "https://etherscan.io/tx/",
@@ -47,20 +49,6 @@ export function TransactionList() {
     return (transactions ?? []).slice(0, DISPLAY_LIMIT);
   }, [transactions]);
 
-  const formatTime = (timestamp: number) => {
-    if (!timestamp) return "—";
-
-    const now = Date.now() / 1000;
-    const diff = now - timestamp;
-
-    if (diff < 0) return "Just now";
-    if (diff < 60) return "Just now";
-    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-    if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
-    return new Date(timestamp * 1000).toLocaleDateString();
-  };
-
   const formatAddress = (addr: string) => {
     if (!addr) return "—";
     if (addr.length <= 10) return addr;
@@ -83,17 +71,17 @@ export function TransactionList() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.2 }}
     >
-      <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-        <CardHeader className="bg-linear-to-r from-green-500 to-teal-600 text-white pb-4">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg font-medium flex items-center gap-2">
-              <History className="h-5 w-5" />
-              Recent Transactions
+      <Card className="overflow-hidden hover:shadow-2xl transition-all duration-300 border-2 border-white/40 bg-white/60 backdrop-blur-sm group">
+        <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent -skew-x-12 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000 pointer-events-none" />
+        <CardHeader className="relative bg-linear-to-r from-teal-400 via-emerald-400 to-green-400 text-white pb-4">
+          <div className="absolute top-2 right-2 text-white/20 text-2xl">✦</div>
+
+          <div className="flex items-center justify-between relative z-10">
+            <CardTitle className="text-lg font-serif flex items-center gap-2">
+              <Scroll className="h-5 w-5" />
+              Journey Chronicle
             </CardTitle>
-            <Badge
-              variant="secondary"
-              className="bg-white/20 text-white border-white/30"
-            >
+            <Badge className="bg-white/30 text-white border-white/40 backdrop-blur-sm font-serif text-xs min-w-17.5">
               Last {DISPLAY_LIMIT}
             </Badge>
           </div>
@@ -102,25 +90,25 @@ export function TransactionList() {
         <CardContent className="pt-6 min-h-45">
           {!mounted && (
             <div className="flex flex-col items-center justify-center py-8">
-              <Loader2 className="h-8 w-8 text-gray-400 animate-spin mb-3" />
-              <p className="text-gray-500 text-sm">Loading...</p>
+              <Loader2 className="h-8 w-8 text-emerald-400 animate-spin mb-3" />
+              <p className="text-slate-600 text-sm font-light">Summoning...</p>
             </div>
           )}
 
           {mounted && !address && (
             <div className="flex flex-col items-center justify-center py-8">
-              <History className="h-12 w-12 text-gray-400 mb-4" />
-              <p className="text-gray-500 text-center text-sm">
-                Connect your wallet to view transactions
+              <History className="h-12 w-12 text-slate-300 mb-4" />
+              <p className="text-slate-600 text-center text-sm font-light">
+                Connect your wallet to view chronicle
               </p>
             </div>
           )}
 
           {showUnsupportedNetworkNote && (
-            <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3">
-              <p className="text-amber-800 text-sm">
-                Explorer links aren&apos;t configured for this network (chainId:{" "}
-                {chainId}).
+            <div className="mb-4 rounded-lg border border-amber-200/60 bg-amber-50/60 backdrop-blur-sm p-3">
+              <p className="text-amber-800 text-sm font-light">
+                Explorer scrolls aren&apos;t available for this realm (chainId:{" "}
+                {chainId})
               </p>
             </div>
           )}
@@ -128,18 +116,20 @@ export function TransactionList() {
           {mounted && address && isLoading && (
             <div className="flex flex-col items-center justify-center py-8">
               <Loader2 className="h-8 w-8 text-green-500 animate-spin mb-3" />
-              <p className="text-gray-500 text-sm">Loading transactions...</p>
+              <p className="text-slate-600 text-sm font-light">
+                Reading chronicles...
+              </p>
             </div>
           )}
 
           {mounted && address && !isLoading && isError && (
             <div className="flex flex-col items-center justify-center py-8">
               <AlertCircle className="h-12 w-12 text-red-400 mb-4" />
-              <p className="text-red-600 text-sm mb-1">
-                Failed to load transactions
+              <p className="text-red-600 text-sm mb-1 font-medium">
+                Spell failed
               </p>
-              <p className="text-gray-500 text-xs">
-                Check your API key / network configuration
+              <p className="text-slate-500 text-xs font-light">
+                Check your API key or network
               </p>
             </div>
           )}
@@ -148,9 +138,9 @@ export function TransactionList() {
             <>
               {displayedTransactions.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-8">
-                  <History className="h-12 w-12 text-gray-400 mb-4" />
-                  <p className="text-gray-500 text-center text-sm">
-                    No transactions yet
+                  <History className="h-12 w-12 text-slate-300 mb-4" />
+                  <p className="text-slate-600 text-center text-sm font-light">
+                    No journeys recorded yet
                   </p>
                 </div>
               ) : (
@@ -162,24 +152,26 @@ export function TransactionList() {
                     return (
                       <div
                         key={tx.hash}
-                        className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-100"
+                        className="flex flex-col md:flex-row md:items-center md:justify-between p-3 rounded-xl hover:bg-linear-to-r hover:from-teal-50/50 hover:to-emerald-50/50 transition-all duration-200 border border-transparent hover:border-teal-200/40 gap-3"
                       >
-                        <div className="flex items-center gap-3 flex-1">
+                        <div className="flex items-center gap-3">
                           <div
-                            className={`h-10 w-10 rounded-full flex items-center justify-center ${
-                              tx.type === "sent" ? "bg-red-100" : "bg-green-100"
+                            className={`h-10 w-10 flex-shrink-0 rounded-full flex items-center justify-center ${
+                              tx.type === "sent"
+                                ? "bg-linear-to-br from-red-100 to-orange-100"
+                                : "bg-linear-to-br from-emerald-100 to-teal-100"
                             }`}
                           >
                             {tx.type === "sent" ? (
-                              <ArrowUpRight className="h-5 w-5 text-red-600" />
+                              <ArrowUpRight className="h-5 w-5 text-orange-600" />
                             ) : (
-                              <ArrowDownLeft className="h-5 w-5 text-green-600" />
+                              <ArrowDownLeft className="h-5 w-5 text-emerald-600" />
                             )}
                           </div>
 
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
-                              <p className="font-medium text-gray-900 capitalize">
+                              <p className="font-medium text-slate-800 capitalize text-sm">
                                 {tx.type}
                               </p>
                               {tx.isError && (
@@ -191,19 +183,21 @@ export function TransactionList() {
                                 </Badge>
                               )}
                             </div>
-                            <p className="text-xs text-gray-500 font-mono truncate">
+                            <p className="text-xs text-slate-500 font-mono truncate">
                               {tx.type === "sent" ? "To: " : "From: "}
                               {formatAddress(
                                 tx.type === "sent" ? tx.to : tx.from
                               )}
                             </p>
                           </div>
+                        </div>
 
-                          <div className="text-right mr-2">
-                            <p className="font-semibold text-gray-900">
+                        <div className="flex items-center justify-between md:justify-end gap-3 pl-[52px] md:pl-0">
+                          <div className="text-left md:text-right">
+                            <p className="font-semibold text-slate-800 text-sm">
                               {formatEthValue(tx.value)} ETH
                             </p>
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-slate-500">
                               {formatTime(tx.timestamp)}
                             </p>
                           </div>
@@ -212,7 +206,7 @@ export function TransactionList() {
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="h-8 w-8 p-0"
+                              className="h-8 w-8 p-0 hover:bg-teal-100/50 flex-shrink-0"
                               asChild
                             >
                               <a
@@ -221,18 +215,18 @@ export function TransactionList() {
                                 rel="noopener noreferrer"
                                 aria-label="Open in explorer"
                               >
-                                <ExternalLink className="h-4 w-4 text-gray-400" />
+                                <ExternalLink className="h-4 w-4 text-slate-400" />
                               </a>
                             </Button>
                           ) : (
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="h-8 w-8 p-0"
+                              className="h-8 w-8 p-0 flex-shrink-0"
                               disabled
                               aria-label="Explorer unavailable"
                             >
-                              <ExternalLink className="h-4 w-4 text-gray-300" />
+                              <ExternalLink className="h-4 w-4 text-slate-300" />
                             </Button>
                           )}
                         </div>
